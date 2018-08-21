@@ -12,11 +12,11 @@ class HOG:
         self.pix_per_cell = pix_per_cell
         self.pix_per_block = cell_per_block
 
-    def get_hog_features(self, img, vis=True, feature_vec=True):
+    def get_hog_features(self, img, vis=False, feature_vec=False):
         return_list = hog(img, orientations=self.orientations, pixels_per_cell=(self.pix_per_cell, self.pix_per_cell),
                                   cells_per_block=(cell_per_block, cell_per_block),
                                   block_norm= 'L2-Hys', transform_sqrt=False,
-                                  visualise= vis, feature_vector= feature_vec)
+                                  visualize= vis, feature_vector= feature_vec)
         hog_features = return_list[0]
         if vis:
             hog_img = return_list[1]
