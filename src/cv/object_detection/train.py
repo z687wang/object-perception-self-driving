@@ -1,8 +1,10 @@
 import glob
 import cv2
 import numpy as np
+import pickle
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
+
 
 from feature_extraction.main import extract_hog_features
 
@@ -29,6 +31,7 @@ def load_train_data(colorspace, orient, pix_per_cell, cell_per_block, hog_channe
     return X_train, y_train, X_test, y_test
 
 def train(colorspace, orientations, pixel_per_cell, cell_per_block, hog_channel):
+    
     svc = LinearSVC()
 
     X_train, y_train, X_test, y_test = load_train_data(colorspace, orientations, pixel_per_cell, cell_per_block, hog_channel)

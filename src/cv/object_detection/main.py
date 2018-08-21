@@ -21,5 +21,5 @@ hog_feat = True # HOG features on or off
 
 
 svc = train(color_space, orient, pix_per_cell, cell_per_block, hog_channel)
-rectangles = find_cars(test_img, ystart, ystop, scale, colorspace, hog_channel, svc, None, orient, pix_per_cell, cell_per_block, None, None)
+rectangles = find_vehicles(test_img, ystart, ystop, scale, colorspace, hog_channel, svc, None, orient, pix_per_cell, cell_per_block, None, None)
 print(len(rectangles), 'rectangles found in image')
