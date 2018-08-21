@@ -50,8 +50,9 @@ def extract_spatial_color_hist_features(imgs, cspace='RGB', spatial_size=(32, 32
         features.append(np.concatenate(spatial_features, hist_features))
         return features
 
-def extract_hog_features(imgs, cspace='RGB', orient=9, pixel_per_cell=8, cell_per_block=2, hog_channel=0):
+def extract_hog_features(imgs, cspace='RGB', orient=9, pix_per_cell=8, cell_per_block=2, hog_channel=0):
     features = []
+    hog = HOG(orient, pix_per_cell, cell_per_block)
     for imgSrc in imgs:
         img = cv2.imread(imgSrc)
         img_RGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -67,16 +68,18 @@ def extract_hog_features(imgs, cspace='RGB', orient=9, pixel_per_cell=8, cell_pe
         else:
             feature_image = np.copy(img_RGB)
 
-        hog = HOG(orient, pixel_per_cell, cell_per_block)
+        # hog = HOG(orient, pixel_per_cell, cell_per_block)
         if hog_channel == 'ALL':
             hog_features = []
             for channel in range(feature_image.shape[2]):
-                channel_hog_feature = hog.get_hog_features(feature_image[:,:,channel], False, True)
+                channel_hog_feature = hog.get_hog_features(feature_image[:,:,channel],
+                                    vis=False, feature_vec=True)
                 hog_features.append(channel_hog_feature)
-            hog_feature = np.ravel(hog_features)
-            features.append(hog_features)
+            hog_features = np.ravel(hog_features)
+            
         else:
-            feature = hog.get_hog_features(feature_image, False, True)
-            features.append(feature)
+            hog_features = hog.get_hog_features(feature_image[:,:,hog_channel], orient, 
+                        vis=False, feature_vec=True)
+        features.append(hog_features)
 
     return features

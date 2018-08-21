@@ -6,13 +6,7 @@ from sklearn.model_selection import train_test_split
 
 from feature_extraction.main import extract_hog_features
 
-def load_train_data():
-    colorspace = 'YUV'
-    orient = 11
-    pix_per_cell = 16
-    cell_per_block = 2
-    hog_channel = 'ALL'
-
+def load_train_data(colorspace, orient, pix_per_cell, cell_per_block, hog_channel):
     car_images_src = '../../../train_data/vehicles/**/*.png'
     not_car_images_src = '../../../train_data/non-vehicles/**/*.png'
     car_images = glob.glob(car_images_src)
@@ -23,7 +17,6 @@ def load_train_data():
 
     X = np.vstack((car_features, not_car_features)).astype(np.float64)
 
-    # Define the labels vector
     y = np.hstack((np.ones(len(car_features)), np.zeros(len(not_car_features))))
 
     # Split up data into randomized training and test sets
@@ -35,10 +28,10 @@ def load_train_data():
     print('Feature vector length:', len(X_train[0]))
     return X_train, y_train, X_test, y_test
 
-def train():
+def train(colorspace, orientations, pixel_per_cell, cell_per_block, hog_channel):
     svc = LinearSVC()
 
-    X_train, y_train, X_test, y_test = load_train_data()
+    X_train, y_train, X_test, y_test = load_train_data(colorspace, orientations, pixel_per_cell, cell_per_block, hog_channel)
 
     svc.fit(X_train, y_train)
 
