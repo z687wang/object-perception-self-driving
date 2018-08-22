@@ -68,7 +68,6 @@ def extract_hog_features(imgs, cspace='RGB', orient=9, pix_per_cell=8, cell_per_
         else:
             feature_image = np.copy(img_RGB)
 
-        # hog = HOG(orient, pixel_per_cell, cell_per_block)
         if hog_channel == 'ALL':
             hog_features = []
             for channel in range(feature_image.shape[2]):

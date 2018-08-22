@@ -7,7 +7,7 @@ def color_hist(img, nbins=32, bins_range=(0, 256)):
     bhist = np.histogram(img[:,:,2], bins=nbins, range=bins_range)
 
     bin_edges = rhist[1]
-    bin_centers = (bin_edges[1:], bin_edges[0:len(bin_edges) - 1]) / 2
+    bin_centers = (bin_edges[1:] + bin_edges[0:len(bin_edges) - 1]) / 2
     hist_features = np.concatenate((rhist[0], ghist[0], bhist[0]))
 
-    return rhist, ghist, bhist, bin_centers, hist_features
+    return hist_features

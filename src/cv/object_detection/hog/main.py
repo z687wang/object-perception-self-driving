@@ -13,7 +13,8 @@ class HOG:
             features, hog_image = hog(img, orientations=self.orient, 
                                     pixels_per_cell=(self.pix_per_cell, self.pix_per_cell),
                                     cells_per_block=(self.cell_per_block, self.cell_per_block), 
-                                    transform_sqrt=False, 
+                                    transform_sqrt=False,
+                                    block_norm='L2-Hys',
                                     visualize=vis, feature_vector=feature_vec)
             return features, hog_image
 
@@ -21,7 +22,8 @@ class HOG:
             features = hog(img, orientations=self.orient, 
                         pixels_per_cell=(self.pix_per_cell, self.pix_per_cell),
                         cells_per_block=(self.cell_per_block, self.cell_per_block), 
-                        transform_sqrt=False, 
+                        transform_sqrt=False,
+                        block_norm='L2-Hys',
                         visualize=vis, feature_vector=feature_vec)
             return features
 

@@ -9,41 +9,39 @@ from bin_spatial.main import bin_spatial
 from hog.main import HOG
 
 def find_vehicles(img, ystart, ystop, scale, cspace, hog_channel, svc, X_scaler, orient, 
-              pix_per_cell, cell_per_block, spatial_size, hist_bins, show_all_rectangles=False):
-    
-    # array of rectangles where cars were detected
+              pix_per_cell, cell_per_block, spatial_size=(32, 32), hist_bins=32, show_all_rectangles=False):
+
     rectangles = []
     hog = HOG(orient, pix_per_cell, cell_per_block)
     img = img.astype(np.float32)/255
     
-    img_tosearch = img[ystart:ystop,:,:]
+    img_cropped = img[ystart:ystop,:,:]
 
-    # apply color conversion if other than 'RGB'
     if cspace != 'RGB':
         if cspace == 'HSV':
-            ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2HSV)
+            img_to_search = cv2.cvtColor(img_cropped, cv2.COLOR_RGB2HSV)
         elif cspace == 'LUV':
-            ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2LUV)
+            img_to_search = cv2.cvtColor(img_cropped, cv2.COLOR_RGB2LUV)
         elif cspace == 'HLS':
-            ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2HLS)
+            img_to_search = cv2.cvtColor(img_cropped, cv2.COLOR_RGB2HLS)
         elif cspace == 'YUV':
-            ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2YUV)
+            img_to_search = cv2.cvtColor(img_cropped, cv2.COLOR_RGB2YUV)
         elif cspace == 'YCrCb':
-            ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2YCrCb)
-    else: ctrans_tosearch = np.copy(image)   
+            img_to_search = cv2.cvtColor(img_cropped, cv2.COLOR_RGB2YCrCb)
+    else: img_to_search = np.copy(img_cropped)
     
     # rescale image if other than 1.0 scale
     if scale != 1:
-        imshape = ctrans_tosearch.shape
-        ctrans_tosearch = cv2.resize(ctrans_tosearch, (np.int(imshape[1]/scale), np.int(imshape[0]/scale)))
-    
+        imshape = img_to_search.shape
+        img_to_search = cv2.resize(img_to_search, (np.int(imshape[1]/scale), np.int(imshape[0]/scale)))
+
     # select colorspace channel for HOG 
     if hog_channel == 'ALL':
-        ch1 = ctrans_tosearch[:,:,0]
-        ch2 = ctrans_tosearch[:,:,1]
-        ch3 = ctrans_tosearch[:,:,2]
+        ch1 = img_to_search[:,:,0]
+        ch2 = img_to_search[:,:,1]
+        ch3 = img_to_search[:,:,2]
     else: 
-        ch1 = ctrans_tosearch[:,:,hog_channel]
+        ch1 = img_to_search[:,:,hog_channel]
 
     # Define blocks and steps as above
     nxblocks = (ch1.shape[1] // pix_per_cell)+1  #-1
@@ -75,31 +73,17 @@ def find_vehicles(img, ystart, ystop, scale, cspace, hog_channel, svc, X_scaler,
             else:
                 hog_features = hog_feat1
 
-            xleft = xpos*pix_per_cell
-            ytop = ypos*pix_per_cell
-            
-            ################ ONLY FOR BIN_SPATIAL AND COLOR_HIST ################
+            xleft = xpos * pix_per_cell
+            ytop = ypos * pix_per_cell
 
-            # Extract the image patch
-            #subimg = cv2.resize(ctrans_tosearch[ytop:ytop+window, xleft:xleft+window], (64,64))
-          
-            # Get color features
-            #spatial_features = bin_spatial(subimg, size=spatial_size)
-            #hist_features = color_hist(subimg, nbins=hist_bins)
-
-            # Scale features and make a prediction
-            #test_features = X_scaler.transform(np.hstack((spatial_features, hist_features, hog_features)).reshape(1, -1))    
-            #test_features = X_scaler.transform(np.hstack((shape_feat, hist_feat)).reshape(1, -1))    
-            #test_prediction = svc.predict(test_features)
-            
-            ######################################################################
-            
-            test_prediction = svc.predict(hog_features)
+            spatial_features = bin_spatial(img_to_search)
+            hist_features, _, _, _, _ = color_hist(img_to_search)
+            test_features = X_scaler.transform(np.hstack((spatial_features, hog_features)).reshape(1, -1))
+            test_prediction = svc.predict(test_features)
             
             if test_prediction == 1 or show_all_rectangles:
                 xbox_left = np.int(xleft*scale)
                 ytop_draw = np.int(ytop*scale)
                 win_draw = np.int(window*scale)
                 rectangles.append(((xbox_left, ytop_draw+ystart),(xbox_left+win_draw,ytop_draw+win_draw+ystart)))
-                
     return rectangles

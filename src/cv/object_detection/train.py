@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
-
+from sklearn.preprocessing import StandardScaler
 
 from feature_extraction.main import extract_hog_features
 
@@ -25,19 +25,31 @@ def load_train_data(colorspace, orient, pix_per_cell, cell_per_block, hog_channe
     rand_state = np.random.randint(0, 100)
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=rand_state)
+    X_scaler = StandardScaler().fit(X_train)
+    # Apply the scaler to X
+    X_train = X_scaler.transform(X_train)
+    X_test = X_scaler.transform(X_test)
     print('Using:', orient, 'orientations', pix_per_cell,
           'pixels per cell and', cell_per_block, 'cells per block')
     print('Feature vector length:', len(X_train[0]))
-    return X_train, y_train, X_test, y_test
+    return X_train, y_train, X_test, y_test, X_scaler
 
-def train(colorspace, orientations, pixel_per_cell, cell_per_block, hog_channel):
-    
-    svc = LinearSVC()
+def train(colorspace, orientations, pixel_per_cell, cell_per_block, hog_channel, load):
+    modelPath = 'svc_classifier.pkl'
+    if (not load):
+        svc = LinearSVC()
 
-    X_train, y_train, X_test, y_test = load_train_data(colorspace, orientations, pixel_per_cell, cell_per_block, hog_channel)
+        X_train, y_train, X_test, y_test, X_scaler = load_train_data(colorspace, orientations, pixel_per_cell, cell_per_block,
+                                                           hog_channel)
 
-    svc.fit(X_train, y_train)
+        svc.fit(X_train, y_train)
 
-    print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
+        print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
+        with open(modelPath, 'wb') as fid:
+            pickle.dump(svc, fid)
+            print('Save model to', modelPath)
+    else:
+        with open(modelPath, 'rb') as fid:
+            svc = pickle.load(fid)
 
-    return svc
+    return svc, X_scaler
