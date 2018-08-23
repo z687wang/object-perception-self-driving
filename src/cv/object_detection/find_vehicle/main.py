@@ -73,6 +73,7 @@ def search_windows(img, windows, svc, scaler, color_space='RGB',
         test_features = scaler.transform(np.array(features).reshape(1, -1))
         #6) Predict using your classifier
         prediction = svc.predict(test_features)
+        print(prediction)
         #7) If positive (prediction == 1) then save the window
         if prediction == 1:
             on_windows.append(window)

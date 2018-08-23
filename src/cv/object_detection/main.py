@@ -5,8 +5,9 @@ from train import train, load_train_data
 from draw.main import draw_boxes
 from scipy.ndimage.measurements import label
 
-test_img = mpimg.imread('../../../test_images/test4.jpg')
-colorspace = 'YCrCb'
+test_img = cv2.imread('../../../test_images/test4.jpg')
+
+colorspace = 'YUV'
 orient = 15
 pix_per_cell = 8
 cell_per_block = 2

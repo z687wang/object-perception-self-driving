@@ -126,7 +126,7 @@ spatial_size=(32, 32), hist_bins=32, hist_range=(0, 256), bin_spatial_feat=True,
                 hog_features = np.ravel(hog_features)
                 
             else:
-                hog_features = hog.get_hog_features(feature_image[:,:,hog_channel], orient, 
+                hog_features = hog.get_hog_features(feature_image[:,:,hog_channel], orient,
                             vis=False, feature_vec=True)
             feature.append(hog_features)
         features.append(np.concatenate(feature))
