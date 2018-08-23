@@ -73,7 +73,6 @@ def search_windows(img, windows, svc, scaler, color_space='RGB',
         test_features = scaler.transform(np.array(features).reshape(1, -1))
         #6) Predict using your classifier
         prediction = svc.predict(test_features)
-        print(prediction)
         #7) If positive (prediction == 1) then save the window
         if prediction == 1:
             on_windows.append(window)
@@ -90,7 +89,6 @@ def find_vehicles(img, cspace, ystart, ystop, scale, svc, X_scaler,
     hog = HOG(orient, pix_per_cell, cell_per_block)
     
     img_tosearch = img[ystart:ystop,:,:]
-    img_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_BGR2RGB)
     if cspace != 'RGB':
         if cspace == 'HSV':
             ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2HSV)
@@ -113,13 +111,17 @@ def find_vehicles(img, cspace, ystart, ystop, scale, svc, X_scaler,
     ch3 = ctrans_tosearch[:,:,2]
 
     # Define blocks and steps as above
-    nxblocks = (ch1.shape[1] // pix_per_cell) - cell_per_block + 1
-    nyblocks = (ch1.shape[0] // pix_per_cell) - cell_per_block + 1 
+    print('shape ch1:', ch1.shape[1], ch1.shape[0])
+    nxblocks = (ch1.shape[1] // pix_per_cell) + 1
+    nyblocks = (ch1.shape[0] // pix_per_cell) + 1
+    print('nx, ny blocks:', nxblocks, nyblocks)
     nfeat_per_block = orient*cell_per_block**2
     
     # 64 was the orginal sampling rate, with 8 cells and 8 pix per cell
     window = 64
-    nblocks_per_window = (window // pix_per_cell) - cell_per_block + 1
+    print('cell_per_block', cell_per_block)
+    nblocks_per_window = (window // pix_per_cell) - 1
+    print('nblocks_per_window:', nblocks_per_window)
     cells_per_step = 2  # Instead of overlap, define how many cells to step
     nxsteps = (nxblocks - nblocks_per_window) // cells_per_step
     nysteps = (nyblocks - nblocks_per_window) // cells_per_step
@@ -130,6 +132,7 @@ def find_vehicles(img, cspace, ystart, ystop, scale, svc, X_scaler,
     hog3 = hog.get_hog_features(ch3, feature_vec=False)
     
     bbox_list=[]
+    print("steps", nxsteps, nysteps)
     for xb in range(nxsteps):
         for yb in range(nysteps):
             ypos = yb*cells_per_step
@@ -147,7 +150,7 @@ def find_vehicles(img, cspace, ystart, ystop, scale, svc, X_scaler,
             subimg = cv2.resize(ctrans_tosearch[ytop:ytop+window, xleft:xleft+window], (64,64))
 
             # Get color features
-            spatial_features = bin_spatial(subimg, size=spatial_size)
+            spatial_features = bin_spatial(subimg, color_space=cspace, size=spatial_size)
             hist_features = color_hist(subimg, nbins=hist_bins)
 
             # Scale features and make a prediction

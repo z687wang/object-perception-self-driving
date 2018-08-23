@@ -90,7 +90,7 @@ def extract_features(imgs, cspace='RGB', orient=9, pix_per_cell=8, cell_per_bloc
 spatial_size=(32, 32), hist_bins=32, hist_range=(0, 256), bin_spatial_feat=True, color_hist_feat=True, hog_feat=True):
     features = []
     hog = HOG(orient, pix_per_cell, cell_per_block)
-
+    print("extract features with colorspace", cspace)
     for imgSrc in imgs:
         feature = []
         img = mpimg.imread(imgSrc)
@@ -109,11 +109,11 @@ spatial_size=(32, 32), hist_bins=32, hist_range=(0, 256), bin_spatial_feat=True,
             feature_image = np.copy(img)
 
         if bin_spatial_feat == True:
-            spatial_features = bin_spatial(feature_image, cspace, spatial_size)
+            spatial_features = bin_spatial(feature_image, color_space=cspace, size=spatial_size)
             feature.append(spatial_features)
         
         if color_hist_feat == True:
-            hist_features = color_hist(feature_image, hist_bins, hist_range)
+            hist_features = color_hist(feature_image, nbins=hist_bins, bins_range=hist_range)
             feature.append(hist_features)
 
         if hog_feat == True:
@@ -151,11 +151,11 @@ spatial_size=(32, 32), hist_bins=32, hist_range=(0, 256), bin_spatial_feat=True,
         feature_image = np.copy(img)
 
     if bin_spatial_feat == True:
-        spatial_features = bin_spatial(feature_image, cspace, spatial_size)
+        spatial_features = bin_spatial(feature_image, color_space=cspace, size=spatial_size)
         feature.append(spatial_features)
     
     if color_hist_feat == True:
-        hist_features = color_hist(feature_image, hist_bins, hist_range)
+        hist_features = color_hist(feature_image, nbins=hist_bins, bins_range=hist_range)
         feature.append(hist_features)
 
     if hog_feat == True:
