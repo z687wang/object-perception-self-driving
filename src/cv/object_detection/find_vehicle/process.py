@@ -47,25 +47,51 @@ def detect_vehicles(img, colorspace, orient, pix_per_cell, cell_per_block, hog_c
   scale = 2.0
   rectangles.append(find_vehicles(img, colorspace, ystart, ystop, scale, svc, X_scaler, orient, 
                         pix_per_cell, cell_per_block, spatial_size, hist_bins))
+
+  ystart = 400
+  ystop = 528
+  scale = 1.5
+  rectangles.append(find_vehicles(img, colorspace, ystart, ystop, scale, svc, X_scaler, orient, 
+                        pix_per_cell, cell_per_block, spatial_size, hist_bins))
+
   ystart = 432
   ystop = 560
   scale = 2.0
   rectangles.append(find_vehicles(img, colorspace, ystart, ystop, scale, svc, X_scaler, orient, 
                         pix_per_cell, cell_per_block, spatial_size, hist_bins))
-  ystart = 400
-  ystop = 596
-  scale = 3.5
+  ystart = 432
+  ystop = 560
+  scale = 2.5
   rectangles.append(find_vehicles(img, colorspace, ystart, ystop, scale, svc, X_scaler, orient, 
                         pix_per_cell, cell_per_block, spatial_size, hist_bins))
-  ystart = 464
+
+  ystart = 400
+  ystop = 596
+  scale = 3.0
+  rectangles.append(find_vehicles(img, colorspace, ystart, ystop, scale, svc, X_scaler, orient, 
+                        pix_per_cell, cell_per_block, spatial_size, hist_bins))
+
+  ystart = 400
   ystop = 660
-  scale = 3.5
+  scale = 2.0
+  rectangles.append(find_vehicles(img, colorspace, ystart, ystop, scale, svc, X_scaler, orient, 
+                        pix_per_cell, cell_per_block, spatial_size, hist_bins))
+  
+  # ystart = 400
+  # ystop = 660
+  # scale = 3.0
+  # rectangles.append(find_vehicles(img, colorspace, ystart, ystop, scale, svc, X_scaler, orient, 
+  #                       pix_per_cell, cell_per_block, spatial_size, hist_bins))
+
+  ystart = 400
+  ystop = 660
+  scale = 4.0
   rectangles.append(find_vehicles(img, colorspace, ystart, ystop, scale, svc, X_scaler, orient, 
                         pix_per_cell, cell_per_block, spatial_size, hist_bins))
   rectangles = [item for sublist in rectangles for item in sublist] 
   
-  labels = add_heat(img, rectangles, False)
+  labels = add_heat(img, rectangles, True)
   
   img_rects, rects = draw_labeled_bboxes(img, labels, random_color=True)
   
-  return img_rects
+  return img_rects, rectangles

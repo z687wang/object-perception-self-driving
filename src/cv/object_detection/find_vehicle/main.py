@@ -161,7 +161,8 @@ def find_vehicles(img, cspace, ystart, ystop, scale, svc, X_scaler,
             # Scale features and make a prediction  
             test_prediction = svc.predict(test_features)
 
-            if test_prediction == 1:
+            showAllWindows = False
+            if test_prediction == 1 or showAllWindows:
                 xbox_left = np.int(xleft*scale)
                 ytop_draw = np.int(ytop*scale)
                 win_draw = np.int(window*scale)
