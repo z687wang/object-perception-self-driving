@@ -9,7 +9,7 @@ def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
     for bbox in bboxes:
         if color == 'random' or random_color:
             color = (np.random.randint(0,255), np.random.randint(0,255), np.random.randint(0,255))
-            print(color)
+            # print(color)
             random_color = True
         # Draw a rectangle given bbox coordinates
         cv2.rectangle(imcopy, bbox[0], bbox[1], (np.random.randint(0,255), np.random.randint(0,255), np.random.randint(0,255)), thick)
@@ -33,7 +33,7 @@ def draw_labeled_bboxes(img, labels, random_color=True):
             color = (np.random.randint(0,255),np.random.randint(0,255),np.random.randint(0,255))
         else:
             color = (0,0,255)
-        print('color:', color)
+        # print('color:', color)
         cv2.rectangle(img, (bbox[0][0], bbox[0][1] + 10), bbox[1], (0,255,0), 2)
         font = cv2.FONT_HERSHEY_DUPLEX
         cv2.putText(img, 'Vehicle Detected', bbox[0], font, 0.5, (0,255,0), 1, cv2.LINE_AA)

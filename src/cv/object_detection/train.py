@@ -6,7 +6,7 @@ from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
-from feature_extraction.main import extract_hog_features, extract_features
+from object_detection.feature_extraction.main import extract_hog_features, extract_features
 
 def load_train_data(colorspace, orient, pix_per_cell, cell_per_block, hog_channel, bin_spatial_feat, color_hist_feat, hog_feat):
     car_images_src = '../../../train_data/vehicles/**/*.png'
@@ -36,8 +36,8 @@ def load_train_data(colorspace, orient, pix_per_cell, cell_per_block, hog_channe
     return X_train, y_train, X_test, y_test, X_scaler
 
 def train(colorspace, orientations, pixel_per_cell, cell_per_block, hog_channel, load, bin_spatial_feat, color_hist_feat, hog_feat):
-    modelPath = 'svc_classifier.pkl'
-    scalarPath = 'X_scalar.pkl'
+    modelPath = 'C:\\Users\ZHE WANG\source\object-perception-self-driving\src\cv\object_detection\svc_classifier.pkl'
+    scalarPath = 'C:\\Users\ZHE WANG\source\object-perception-self-driving\src\cv\object_detection\X_scalar.pkl'
     if (not load):
         svc = LinearSVC()
 

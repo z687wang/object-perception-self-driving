@@ -5,9 +5,9 @@ import matplotlib.image as mpimg
 import cv2
 import sys
 sys.path.append('../')
-from bin_spatial.main import bin_spatial
-from color_hist.main import  color_hist
-from hog.main import HOG
+from object_detection.bin_spatial.main import bin_spatial
+from object_detection.color_hist.main import  color_hist
+from object_detection.hog.main import HOG
 
 def data_look(car_list, notcar_list):
     data_dict = {}

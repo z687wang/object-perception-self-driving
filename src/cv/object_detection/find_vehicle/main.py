@@ -2,11 +2,10 @@ import cv2
 import numpy as np
 import sys
 sys.path.append('../')
-from feature_extraction.main import extract_hog_features, extract_features_single_img
-from hog.main import HOG
-from color_hist.main import color_hist
-from bin_spatial.main import bin_spatial
-from hog.main import HOG
+from object_detection.feature_extraction.main import extract_hog_features, extract_features_single_img
+from object_detection.color_hist.main import color_hist
+from object_detection.bin_spatial.main import bin_spatial
+from object_detection.hog.main import HOG
 
 def slide_window(img, x_start_stop=[None, None], y_start_stop=[None, None], 
                  xy_window=(128, 128), #(64, 64), (96, 96)
@@ -98,6 +97,8 @@ def find_vehicles(img, cspace, ystart, ystop, scale, svc, X_scaler,
             ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2HLS)
         elif cspace == 'YUV':
             ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2YUV)
+        elif cspace == 'YCrCb':
+            ctrans_tosearch = cv2.cvtColor(img_tosearch, cv2.COLOR_RGB2YCrCb)
     else:
         ctrans_tosearch = np.copy(img_tosearch)
     if scale != 1:
@@ -111,17 +112,17 @@ def find_vehicles(img, cspace, ystart, ystop, scale, svc, X_scaler,
     ch3 = ctrans_tosearch[:,:,2]
 
     # Define blocks and steps as above
-    print('shape ch1:', ch1.shape[1], ch1.shape[0])
+    # print('shape ch1:', ch1.shape[1], ch1.shape[0])
     nxblocks = (ch1.shape[1] // pix_per_cell) + 1
     nyblocks = (ch1.shape[0] // pix_per_cell) + 1
-    print('nx, ny blocks:', nxblocks, nyblocks)
+    # print('nx, ny blocks:', nxblocks, nyblocks)
     nfeat_per_block = orient*cell_per_block**2
     
     # 64 was the orginal sampling rate, with 8 cells and 8 pix per cell
     window = 64
-    print('cell_per_block', cell_per_block)
+    # print('cell_per_block', cell_per_block)
     nblocks_per_window = (window // pix_per_cell) - 1
-    print('nblocks_per_window:', nblocks_per_window)
+    # print('nblocks_per_window:', nblocks_per_window)
     cells_per_step = 2  # Instead of overlap, define how many cells to step
     nxsteps = (nxblocks - nblocks_per_window) // cells_per_step
     nysteps = (nyblocks - nblocks_per_window) // cells_per_step
@@ -132,7 +133,7 @@ def find_vehicles(img, cspace, ystart, ystop, scale, svc, X_scaler,
     hog3 = hog.get_hog_features(ch3, feature_vec=False)
     
     bbox_list=[]
-    print("steps", nxsteps, nysteps)
+    # print("steps", nxsteps, nysteps)
     for xb in range(nxsteps):
         for yb in range(nysteps):
             ypos = yb*cells_per_step
